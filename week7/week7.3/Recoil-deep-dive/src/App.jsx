@@ -105,21 +105,19 @@
 // }
 // export default App;
 
-//////////////////////////////////
-
+////////////////////////////////// Learn what are Selector first do problem using useMemo then selector //////////////////////////
+/*
+The problem is show the total notificaton on the profile page by sum of all the notifications Counts 
+*/
 import "./App.css";
-import {
-  RecoilRoot,
-  useRecoilState,
-  useRecoilValue,
-  useSetRecoilState,
-} from "recoil";
+import { RecoilRoot, useRecoilValue } from "recoil";
 import {
   jobsAtom,
   messagingAtom,
   networkAtom,
   notificationAtom,
 } from "./components/atoms/atoms";
+import { useMemo } from "react";
 
 /// Note: When anytime want to access the atom then need to wrap with the RecoilRoot
 function App() {
@@ -136,6 +134,19 @@ function LinkedInBar() {
   const notificationCount = useRecoilValue(notificationAtom);
   const MesaageNotificationCount = useRecoilValue(messagingAtom);
 
+  const totalNoficationCount = useMemo(() => {
+    return (
+      networkNotificationCount +
+      jobsNotificationCount +
+      notificationCount +
+      MesaageNotificationCount
+    );
+  }, [
+    networkNotificationCount,
+    jobsNotificationCount,
+    notificationCount,
+    MesaageNotificationCount,
+  ]);
   return (
     <>
       <button>Home</button>
@@ -146,7 +157,7 @@ function LinkedInBar() {
       <button>Jobs ({jobsNotificationCount})</button>
       <button>Messages ({MesaageNotificationCount})</button>
       <button>Notification ({notificationCount})</button>
-      <button>Profile</button>
+      <button>Profile ({totalNoficationCount})</button>
     </>
   );
 }
