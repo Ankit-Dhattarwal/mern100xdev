@@ -1,11 +1,9 @@
 import "./App.css";
 import { RecoilRoot, useRecoilState, useRecoilValue } from "recoil";
 import {
-  notifcation,
+  notificationState,
   totalNotificationSelector,
 } from "./components/atoms/atoms";
-import { useEffect } from "react";
-import axios from "axios";
 
 function App() {
   return (
@@ -16,19 +14,8 @@ function App() {
 }
 
 function LinkedInBar() {
-  const [networkCount, setNetworkCount] = useRecoilState(notifcation);
+  const [networkCount, setNetworkCount] = useRecoilState(notificationState);
   const totalNotifcationCount = useRecoilValue(totalNotificationSelector); /// Selector
-
-  useEffect(() => {
-    /// fetch
-    axios.get("https://sum-server.100xdevs.com/notifications").then((res) => {
-      setNetworkCount(res.data);
-      console.log(res.data);
-    });
-  }, []);
-
-  console.log("Rendering LinkedInBar with networkCount:", networkCount);
-
   return (
     <>
       <button>Home</button>
