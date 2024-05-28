@@ -65,59 +65,196 @@
 
 /////////----Custom Hooks Data Fetching Hooks--//////////////////
 
+// import { useEffect, useState } from "react";
+// import axios from "axios";
+
+// /// using the setInterval is not perfect but now is good if we not use the clearInterval()
+
+// function useToods(n) {
+//   const [todos, setTodos] = useState([]);
+//   const [loading, setLoading] = useState(true);
+
+//   useEffect(() => {
+//     const value = setInterval(() => {
+//       axios.get("https://sum-server.100xdevs.com/todos").then((res) => {
+//         setTodos(res.data.todos);
+//         setLoading(false);
+//       });
+//     }, n * 1000);
+
+//     axios.get("https://sum-server.100xdevs.com/todos").then((res) => {
+//       setTodos(res.data.todos);
+//       setLoading(false);
+//     });
+
+//     /// cleanup logic
+//     return () => {
+//       clearInterval(value);
+//     };
+//   }, [n]);
+//   return { todos, loading };
+// }
+
+// function App() {
+//   const { todos, loading } = useToods();
+
+//   if (loading) {
+//     return <div>loading...</div>;
+//   }
+
+//   return (
+//     <>
+//       {todos.map((todo) => (
+//         <Track todo={todo} />
+//       ))}
+//     </>
+//   );
+// }
+
+// function Track({ todo }) {
+//   return (
+//     <div>
+//       {todo.title}
+//       <br />
+//       {todo.description}
+//     </div>
+//   );
+// }
+
+// export default App;
+
+//////////--Browser Functionality hooks---//////////////////////
+
+// import { useEffect, useState } from "react";
+
+// function useIsOnline() {
+//   const [isOnline, setIsOnline] = useState(window.navigator.onLine);
+
+//   useEffect(() => {
+//     window.addEventListener("online", () => {
+//       setIsOnline(true);
+//     });
+//     window.addEventListener("offline", () => {
+//       setIsOnline(false);
+//     });
+//   }, []);
+//   return isOnline;
+// }
+
+// function App() {
+//   const isOnline = useIsOnline();
+//   if (isOnline) {
+//     return "You are online.";
+//   }
+//   return "You are offline, please check your connectivity";
+
+//   // useEffect(() => {}, []);
+//   // return (
+//   //   <>
+//   //     {todos.map((todo) => (
+//   //       <Track todo={todo} />
+//   //     ))}
+//   //   </>
+//   // );
+// }
+
+// export default App;
+
+///////////////--Mouse hook--////////////////////////
+
+// import { useEffect, useState } from "react";
+
+// const useMousePointer = () => {
+//   const [position, setPosition] = useState({ x: 0, y: 0 });
+
+//   const handleMouseMove = (e) => {
+//     setPosition({ x: e.clientX, y: e.clientY });
+//   };
+
+//   useEffect(() => {
+//     window.addEventListener("mousemove", handleMouseMove);
+//     return () => {
+//       window.removeEventListener("mousemove", handleMouseMove);
+//     };
+//   }, []);
+
+//   return position;
+// };
+
+// function App() {
+//   const mousePointer = useMousePointer();
+
+//   return (
+//     <>
+//       Your mouse position is {mousePointer.x} {mousePointer.y}
+//     </>
+//   );
+// }
+
+// export default App;
+
+//////////////////----UseInterval ------------//////////////////////
+
+// import { useEffect, useState } from "react";
+
+// function useInterval(fn, timeout) {
+//   useEffect(() => {
+//     const int = setInterval(() => {
+//       fn();
+//     }, timeout);
+//     /// clear the interval here
+//     // return () => {
+//     //   clearInterval(int);
+//     // };
+//   }, []);
+// }
+
+// function App() {
+//   const [count, setCount] = useState(0);
+
+//   useInterval(() => {
+//     setCount((c) => c + 1);
+//   }, 1000);
+//   return <>Time is at {count}</>;
+// }
+
+// export default App;
+
+////////////////----useDebounce----////////////////
+
 import { useEffect, useState } from "react";
-import axios from "axios";
 
-/// using the setInterval is not perfect but now is good if we not use the clearInterval()
-
-function useToods(n) {
-  const [todos, setTodos] = useState([]);
-  const [loading, setLoading] = useState(true);
-
+function useDebounce(val, timeout) {
+  const [debouncedValue, setDebouncedValue] = useState(val);
   useEffect(() => {
-    const value = setInterval(() => {
-      axios.get("https://sum-server.100xdevs.com/todos").then((res) => {
-        setTodos(res.data.todos);
-        setLoading(false);
-      });
-    }, n * 1000);
+    let timoutNumber = setTimeout(() => {
+      setDebouncedValue(val);
+    }, timeout);
 
-    axios.get("https://sum-server.100xdevs.com/todos").then((res) => {
-      setTodos(res.data.todos);
-      setLoading(false);
-    });
-
-    /// cleanup logic
     return () => {
-      clearInterval(value);
+      clearTimeout(timoutNumber);
     };
-  }, [n]);
-  return { todos, loading };
+  }, [val]);
+  return debouncedValue;
 }
 
 function App() {
-  const { todos, loading } = useToods();
+  const [val, setValue] = useState(0);
+  const debouncedValue = useDebounce(val, 500);
 
-  if (loading) {
-    return <div>loading...</div>;
-  }
+  // Here can write logic of call api's by help useDebounce
+  // IMP--
+  /*
+  useEffect( ()=> {
+    fetch / axios 
+  }, [debounceValue])
+  */
 
   return (
     <>
-      {todos.map((todo) => (
-        <Track todo={todo} />
-      ))}
+      Debounced value is {debouncedValue}
+      <input type="text" onChange={(e) => setValue(e.target.value)} />
     </>
-  );
-}
-
-function Track({ todo }) {
-  return (
-    <div>
-      {todo.title}
-      <br />
-      {todo.description}
-    </div>
   );
 }
 
